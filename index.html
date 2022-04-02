@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>講義コードからシラバス参照</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #head {
+            display: block;
+            margin: auto;
+            width: 100vw;
+            height: 60px;
+            background-color: #dddddd;
+        }
+        #extend {
+            display: block;
+            margin: auto;
+            width: 100vw;
+            height: calc( 100vh - 60px );
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="head">
+        <form id="formSettings" action="https://websrv.tcu.ac.jp/tcu_web_v3/slbssbdr.do" method="GET" target="extend">
+            <div>
+                <label for="risyunen">年度</label>
+                <select name="value(risyunen)" id="risyunen" size="1"></select>
+                <select id="targetSelect" size="1" onchange="selectChange();">
+                    <option>このページで開く</option>
+                    <option>新しいページで開く</option>
+                </select>
+            </div>
+            <div>
+                <input type="hidden" name="value(semekikn)" id="semekikn" value="1">
+                <label for="kougicd">講義コード</label>
+                <input name="value(kougicd)" id="kougicd" value="">
+                <button>表示</button>
+            </div>
+        </form>
+    </div>
+    <iframe id="extend" name="extend"></iframe>
+    <script>
+        let today = new Date();
+        let thisYear = today.getFullYear();
+        let thisMonth = today.getMonth() + 1;
+        let element = document.getElementById('risyunen');
+        /* 過去5年分の年度を選択肢に追加 */
+        for (let i = 0; i < 5; i++) {
+            let option = document.createElement('option');
+            option.text = thisYear - i;
+            option.value = thisYear - i;
+            element.appendChild(option);
+        }
+        /* 2月までは1年前の西暦を初期選択 */
+        if (thisMonth <= 2) {
+            let options = element.options;
+            options[1].selected = true;
+        }
+        /* ページ内で開くか新規タブで開くかの選択を反映 */
+        function selectChange() {
+            let settings = document.getElementById('formSettings');
+            let selected = document.getElementById('targetSelect').selectedIndex;
+            if (selected === 1) {
+                settings.setAttribute('target', '_blank');
+            } else {
+                settings.setAttribute('target', 'extend');
+            }
+        }
+    </script>
+</body>
+</html>
